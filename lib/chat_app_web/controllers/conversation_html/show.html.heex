@@ -1,0 +1,32 @@
+<h1>Conversation #<%= @conversation.id %></h1>
+
+<div style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll;">
+  <%= for message <- @messages do %>
+    <p>
+      <strong>
+        <%= message.sender.username || message.sender.phone %> :
+      </strong>
+      <%= message.content %>
+      <small>(<%= message.inserted_at %>)</small>
+    </p>
+  <% end %>
+</div>
+
+<form action={~p"/conversations/#{@conversation.id}/messages"} method="post">
+  <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
+  
+  <label>Envoyer en tant que :</label>
+  <select name="sender_id" required>
+    <%= for user <- @users do %>
+      <option value={user.id}>
+        <%= user.username || user.phone %> (ID: <%= user.id %>)
+      </option>
+    <% end %>
+  </select>
+  
+  <input type="text" name="content" placeholder="Écris un message..." required />
+  <button type="submit">Envoyer</button>
+</form>
+
+<br/>
+<a href={~p"/conversations"}>← Retour</a>

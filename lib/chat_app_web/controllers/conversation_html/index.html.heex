@@ -1,0 +1,11 @@
+<h1>Mes conversations</h1>
+
+<ul>
+  <%= for conversation <- @conversations do %>
+    <li>
+      <a href={~p"/conversations/#{conversation.id}"}>
+        Conversation #<%= conversation.id %>
+      </a>
+    </li>
+  <% end %>
+</ul>
