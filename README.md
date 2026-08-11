@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ChatApp
 
 To start your Phoenix server:
@@ -16,3 +17,6 @@ Ready to run in production? Please [check our deployment guides](https://phoenix
 * Docs: https://phoenix.hexdocs.pm
 * Forum: https://elixirforum.com/c/phoenix-forum
 * Source: https://github.com/phoenixframework/phoenix
+=======
+# cochat
+>>>>>>> b8deb45b6677c9d1a520df31f61d86327fa6c093
