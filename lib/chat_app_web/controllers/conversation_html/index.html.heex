@@ -1,11 +1,41 @@
-<h1>Mes conversations</h1>
+<div style="max-width: 420px; margin: 0 auto; min-height: 100vh; background: var(--bg-void); display: flex; flex-direction: column;">
+  
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 16px 12px;">
+    <span style="font-family: var(--font-display); font-weight: 700; font-size: 22px; color: var(--text-primary); letter-spacing: -0.01em;">Cochat</span>
+    <span style="color: var(--text-muted); font-size: 18px;">⚙</span>
+  </div>
 
-<ul>
-  <%= for conversation <- @conversations do %>
-    <li>
-      <a href={~p"/conversations/#{conversation.id}"}>
-        Conversation #<%= conversation.id %>
+  <div style="display: flex; align-items: center; gap: 8px; margin: 0 16px 10px; padding: 10px 14px; background: var(--surface-1); border-radius: 12px; color: var(--text-faint);">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <span style="font-size: 13px;">Rechercher</span>
+  </div>
+
+  <div style="flex: 1; overflow-y: auto; padding: 4px 8px;">
+    <%= for conversation <- @conversations do %>
+      <%
+        time_str = "#{String.pad_leading("#{conversation.inserted_at.hour}", 2, "0")}:#{String.pad_leading("#{conversation.inserted_at.minute}", 2, "0")}"
+      %>
+      <a href={~p"/conversations/#{conversation.id}"} style="text-decoration: none; color: inherit;">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px 8px; border-radius: 12px; cursor: pointer; transition: background 0.15s ease;">
+          <div style="width: 46px; height: 46px; border-radius: 50%; background: var(--surface-2); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 600; font-size: 15px; color: var(--text-primary); flex-shrink: 0;">
+            C<%= conversation.id %>
+          </div>
+          <div style="flex: 1; min-width: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 3px; gap: 8px;">
+              <span style="font-weight: 600; font-size: 14px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Conversation #<%= conversation.id %></span>
+              <span style="font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); flex-shrink: 0;"><%= time_str %></span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+              <span style="font-size: 12.5px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Clique pour ouvrir</span>
+            </div>
+          </div>
+        </div>
       </a>
-    </li>
-  <% end %>
-</ul>
+    <% end %>
+  </div>
+
+  <div style="padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 12px;">
+    <a href={~p"/users/new"} style="flex: 1; text-align: center; padding: 10px; background: var(--surface-1); border-radius: 12px; color: var(--accent); text-decoration: none; font-weight: 600; font-size: 13px;">+ Nouveau compte</a>
+  </div>
+
+</div>

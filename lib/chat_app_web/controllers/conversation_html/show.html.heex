@@ -1,32 +1,71 @@
-<h1>Conversation #<%= @conversation.id %></h1>
+<%
+  current_user_id = @current_user_id || 1
+%>
 
-<div style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll;">
-  <%= for message <- @messages do %>
-    <p>
-      <strong>
-        <%= message.sender.username || message.sender.phone %> :
-      </strong>
-      <%= message.content %>
-      <small>(<%= message.inserted_at %>)</small>
-    </p>
-  <% end %>
-</div>
+<div style="max-width: 420px; margin: 0 auto; min-height: 100vh; background: var(--bg-void); display: flex; flex-direction: column;">
 
-<form action={~p"/conversations/#{@conversation.id}/messages"} method="post">
-  <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
-  
-  <label>Envoyer en tant que :</label>
-  <select name="sender_id" required>
-    <%= for user <- @users do %>
-      <option value={user.id}>
-        <%= user.username || user.phone %> (ID: <%= user.id %>)
-      </option>
+  <!-- Header -->
+  <div style="display: flex; align-items: center; gap: 10px; padding: 12px 14px 12px; border-bottom: 1px solid var(--border);">
+    <a href={~p"/conversations"} style="text-decoration: none; color: var(--text-muted); font-size: 18px;">←</a>
+    <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--surface-2); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 600; font-size: 13px; color: var(--text-primary);">#<%= @conversation.id %></div>
+    <div style="flex: 1; display: flex; flex-direction: column; min-width: 0;">
+      <span style="font-weight: 600; font-size: 14px; color: var(--text-primary);">Conversation #<%= @conversation.id %></span>
+      <span style="font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); display: flex; align-items: center;">
+        <span style="width: 6px; height: 6px; background: var(--online); border-radius: 50%; margin-right: 5px;"></span>
+        active
+      </span>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div style="flex: 1; overflow-y: auto; padding: 16px 14px; display: flex; flex-direction: column; gap: 3px;">
+    <%= if @messages == [] do %>
+      <div style="text-align: center; color: var(--text-faint); font-size: 13px; margin-top: 40px;">Aucun message. Écris le premier !</div>
     <% end %>
-  </select>
-  
-  <input type="text" name="content" placeholder="Écris un message..." required />
-  <button type="submit">Envoyer</button>
-</form>
 
-<br/>
-<a href={~p"/conversations"}>← Retour</a>
+    <%= for message <- @messages do %>
+      <%
+        is_sent = message.sender_id == current_user_id
+        align = if is_sent, do: "flex-end", else: "flex-start"
+        
+        bubble_style = if is_sent do
+          "background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: var(--accent-text); border-radius: 16px 16px 4px 16px; box-shadow: 0 4px 16px -4px rgba(242,169,63,0.45); padding: 9px 13px; font-size: 13.5px; line-height: 1.45; overflow-wrap: break-word;"
+        else
+          "background: var(--surface-2); color: var(--text-primary); border-radius: 16px 16px 16px 4px; padding: 9px 13px; font-size: 13.5px; line-height: 1.45; overflow-wrap: break-word;"
+        end
+        
+        time_str = "#{String.pad_leading("#{message.inserted_at.hour}", 2, "0")}:#{String.pad_leading("#{message.inserted_at.minute}", 2, "0")}"
+      %>
+
+      <div style={"display: flex; flex-direction: column; max-width: 80%; align-self: #{align}; align-items: #{align};"}>
+        <div style={bubble_style}>
+          <%= message.content %>
+        </div>
+        <div style="font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); margin-top: 3px; padding: 0 4px; display: flex; align-items: center; gap: 4px;">
+          <%= time_str %>
+          <%= if is_sent do %>
+            <span style="color: var(--accent); font-size: 10px;">✓✓</span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Formulaire d'envoi -->
+  <form action={~p"/conversations/#{@conversation.id}/messages"} method="post" style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--surface-1); border-top: 1px solid var(--border);">
+    <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
+    
+    <select name="sender_id" required style="background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 8px 6px; color: var(--text-primary); font-size: 12px; outline: none;">
+      <%= for user <- @users do %>
+        <option value={user.id}><%= user.username || user.phone %></option>
+      <% end %>
+    </select>
+    
+    <input type="text" name="content" placeholder="Message..." required style="flex: 1; background: var(--surface-2); border: none; border-radius: 20px; padding: 10px 15px; color: var(--text-primary); font-family: var(--font-body); font-size: 13px; outline: none; min-width: 0;" />
+    
+    <button type="submit" style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); border: none; color: var(--accent-text); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+    </button>
+  </form>
+
+</div>

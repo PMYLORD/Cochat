@@ -12,10 +12,11 @@ defmodule ChatAppWeb.ConversationController do
   end
 
   def show(conn, %{"id" => id}) do
-    conversation = Repo.get!(Conversations.Conversation, id)
-    messages = Messages.list_conversation_messages(id)
-    users = Repo.all(User)  # ← Récupère tous les users pour le menu déroulant
-    render(conn, :show, conversation: conversation, messages: messages, users: users)
+  conversation = Repo.get!(Conversations.Conversation, id)
+  messages = Messages.list_conversation_messages(id)
+  users = Repo.all(User)
+  # On passe current_user_id pour colorer les bulles correctement
+  render(conn, :show, conversation: conversation, messages: messages, users: users, current_user_id: 1)
   end
 
   def create_message(conn, %{"id" => id, "sender_id" => sender_id, "content" => content}) do
